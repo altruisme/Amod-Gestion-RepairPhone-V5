@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A.MO.D GESTION V24 — SYSTÈME INTÉGRAL</title>
+<style>
+/* ══ RESET + BASE ══ */
+*,::before,::after{box-sizing:border-box}
+body{margin:0;padding:.5rem;font-family:'Segoe UI',Arial,sans-serif;font-size:.875rem;line-height:1.5;color:#1e293b;background:#f1f5f9}
+h1,h2,h3,p{margin:0}
+input,select,textarea,button{font-family:inherit;font-size:100%;margin:0;box-sizing:border-box}
+button{cursor:pointer}
+table{border-collapse:collapse;width:100%}
+th,td{text-align:left}
+
+/* ══ LAYOUT ══ */
+.app-wrap{max-width:80rem;margin:0 auto;display:grid;grid-template-columns:1fr;gap:1.5rem}
+@media(min-width:1280px){.app-wrap{grid-template-columns:2fr 1fr}}
+.col-left{display:flex;flex-direction:column;gap:1.25rem}
+.col-right{display:flex;flex-direction:column;gap:1.25rem}
+.registres{max-width:80rem;margin:1.5rem auto 0;display:flex;flex-direction:column;gap:1.25rem;padding-bottom:5rem}
+
+/* ══ CARDS UI ══ */
+.card{background:#fff;border-radius:1.5rem;border:1px solid #e2e8f0;padding:1.25rem;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.card-dark{background:#1e293b;border-radius:1.5rem;padding:1.25rem;box-shadow:0 20px 25px -5px rgba(0,0,0,.1)}
+.card-blue{background:#fff;border-radius:1.5rem;border:2px solid #dbeafe;padding:2rem;box-shadow:0 4px 6px -1px rgba(0,0,0,.1)}
+
+/* ══ TYPOGRAPHIE UI ══ */
+.app-title{font-size:1.25rem;font-weight:900;color:#1e3a8a;font-style:italic;text-transform:uppercase}
+.section-title{font-weight:900;color:#334155;text-transform:uppercase;font-size:.75rem;font-style:italic}
+.label-sm{display:block;font-size:.75rem;font-weight:900;color:#64748b;text-transform:uppercase;margin-bottom:.5rem}
+
+/* ══ FORMULAIRES ══ */
+.input{padding:.5rem;border:1px solid #e2e8f0;border-radius:.75rem;width:100%;outline:none;font-weight:700}
+.input:focus{box-shadow:0 0 0 2px #3b82f6;border-color:#3b82f6}
+.input-amber{border-color:#fcd34d;background:#fffbeb;color:#78350f}
+.input-green{border-color:#6ee7b7}
+.input-blue{border-color:#93c5fd}
+.input-big{font-size:1.25rem;font-weight:900}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem}
+@media(max-width:640px){.grid2,.grid3{grid-template-columns:1fr}}
+.flex-row{display:flex;gap:.5rem;align-items:center}
+.flex-between{display:flex;justify-content:space-between;align-items:center}
+.flex-wrap{display:flex;flex-wrap:wrap;gap:.5rem;min-height:28px}
+
+/* ══ BOUTONS ══ */
+.btn{padding:.5rem .75rem;border-radius:.5rem;font-weight:900;text-transform:uppercase;font-size:.75rem;border:none;cursor:pointer;transition:background .15s}
+.btn-dark{background:#1e293b;color:#fff}.btn-dark:hover{background:#334155}
+.btn-blue{background:#1d4ed8;color:#fff;padding:1rem;border-radius:1rem;font-size:1rem;width:100%;box-shadow:0 20px 25px -5px rgba(0,0,0,.1)}.btn-blue:hover{background:#1e40af}
+.btn-blue-sm{background:#1d4ed8;color:#fff;border-radius:.75rem;padding:.5rem .75rem}.btn-blue-sm:hover{background:#1e40af}
+.btn-rose{background:#e11d48;color:#fff;padding:.75rem;border-radius:.75rem;width:100%;font-weight:900;text-transform:uppercase;font-size:.75rem;box-shadow:0 10px 15px -3px rgba(0,0,0,.1)}.btn-rose:hover{background:#be123c}
+.btn-slate{background:#94a3b8;color:#fff;border-radius:1rem;padding:.5rem 1rem;font-weight:900;text-transform:uppercase;border:none;cursor:pointer}
+.btn-slate-sm{background:#f1f5f9;color:#1e293b;border-radius:.75rem;padding:.375rem .75rem;font-size:.625rem;font-weight:900;text-transform:uppercase;border:none;cursor:pointer}
+.btn-green-sm{background:#059669;color:#fff;border-radius:.75rem;padding:.375rem .75rem;font-size:.625rem;font-weight:900;text-transform:uppercase;border:none;cursor:pointer}
+.btn-print-big{background:#0f172a;color:#fff;font-weight:900;padding:1rem;border-radius:1rem;box-shadow:0 25px 50px -12px rgba(0,0,0,.25);text-transform:uppercase;font-size:.875rem;width:100%;border:none;cursor:pointer}
+.btn-cancel{background:#94a3b8;color:#fff;border-radius:1rem;padding:.5rem 1rem;font-weight:900;text-transform:uppercase;border:none;cursor:pointer;display:none}
+.lbl-btn{background:#2563eb;color:#fff;padding:.25rem .75rem;border-radius:.5rem;font-size:.5625rem;font-weight:700;cursor:pointer;text-transform:uppercase}
+
+/* ══ TAGS PANNE ══ */
+.panne-tag{background:#dbeafe;color:#1e3a8a;border-radius:9999px;padding:.25rem .625rem;font-size:.6875rem;font-weight:800;display:inline-flex;align-items:center;gap:.5rem}
+
+/* ══ BILAN ══ */
+.bilan-label{font-size:.625rem;font-weight:900;text-transform:uppercase;color:#60a5fa;font-style:italic;letter-spacing:.1em;text-decoration:underline}
+.bilan-row{display:flex;justify-content:space-between;font-weight:900;padding-top:.25rem;color:#fff}
+
+/* ══ TABLES ══ */
+.tbl-head{background:#f8fafc;font-weight:900;text-transform:uppercase;font-size:.75rem}
+.tbl-head th{padding:.75rem;border-bottom:1px solid #e2e8f0}
+.tbl-body td{padding:.75rem;border-bottom:1px solid #f1f5f9;font-size:.75rem}
+.tbl-histo td{padding:.5rem;border-bottom:1px solid #f8fafc;font-size:.6875rem}
+.row-e{background:#f0fdf4}.row-s{background:#fff1f2}
+.tbl-dark-head{background:#1e293b;color:#fff;padding:1.25rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #334155}
+
+/* ══ APERÇU ══ */
+.preview-box{background:#1e293b;padding:.875rem;border-radius:.75rem;display:flex;justify-content:center;overflow-x:auto}
+.apercu-vide{background:#fff;padding:5rem;border-radius:1.5rem;border:1px solid #e2e8f0;text-align:center;color:#cbd5e1;font-style:italic;font-size:.75rem;text-transform:uppercase}
+
+/* ══ ZONE ÉDITABLE ══ */
+.zone-editable-label{font-size:.46875rem;color:#3b82f6;font-weight:700;text-align:center;display:block;margin-bottom:1px}
+@media print{.zone-editable-label{display:none}}
+
+/* ══════════════════════════════════════════════
+   REÇU A5 PORTRAIT 148×210mm
+══════════════════════════════════════════════ */
+.recu-wrap{width:148mm;height:210mm;overflow:hidden;background:#fff;color:#111;display:flex;flex-direction:column;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif;font-size:10px;position:relative}
+
+/* EN-TÊTE / PIED DE PAGE */
+.header-edit,.footer-edit{outline:none;width:100%;min-height:1em;white-space:pre-wrap;word-break:break-word;cursor:text;font-family:'Segoe UI',Arial,sans-serif;font-weight:900;text-align:center;background:transparent;border:none;font-size:10px;line-height:1.3}
+.footer-edit{text-align:left;font-size:8.5px;font-weight:700;line-height:1.55}
+.header-edit:focus,.footer-edit:focus{background:rgba(219,234,254,.25);border-radius:3px}
+@media print{.header-edit:focus,.footer-edit:focus{background:transparent}}
+
+/* TITRES SECTION REÇU */
+.sec-title{background:#1e3a5f;color:#fff;font-size:9px;font-weight:900;text-transform:uppercase;padding:3px 8px;border-radius:2px;flex-shrink:0;letter-spacing:.04em}
+
+/* ══ MODÈLE SIMPLE ÉPURÉ ══ */
+#recu-simple{border:2.5px solid #000}
+.s-top{padding:7px 12px 6px;border-bottom:2px solid #000;text-align:center;flex-shrink:0}
+.s-body{padding:6px 11px;flex:1;min-height:0;display:flex;flex-direction:column;gap:0;overflow:hidden;justify-content:space-between}
+.s-line{display:flex;align-items:baseline;border-bottom:1px solid #e5e7eb;padding:2px 0;line-height:1.3}
+.s-line .lbl{font-size:8px;font-weight:800;text-transform:uppercase;color:#475569;white-space:nowrap;min-width:80px;flex-shrink:0}
+.s-line .val{font-size:11px;font-weight:900;color:#0f172a;flex:1;word-break:break-word}
+.s-money-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-top:2px}
+.s-money-box{border:2px solid #1e3a5f;border-radius:5px;padding:5px 3px;text-align:center;background:#f8fafc}
+.s-money-box.green{border-color:#059669;background:#f0fdf4}
+.s-money-box.blue{border-color:#2563eb;background:#eff6ff}
+.s-money-box.red{border-color:#dc2626;background:#fff1f2}
+.s-money-box .mlbl{font-size:7px;font-weight:900;display:block;margin-bottom:2px;text-transform:uppercase;letter-spacing:.03em}
+.s-money-box.green .mlbl{color:#059669}
+.s-money-box.blue .mlbl{color:#2563eb}
+.s-money-box.red .mlbl{color:#dc2626}
+.s-money-box .mval{font-size:13px;font-weight:900;display:block}
+.s-money-box.green .mval{color:#059669}
+.s-money-box.blue .mval{color:#2563eb}
+.s-money-box.red .mval{color:#dc2626}
+.s-sigs{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:3px}
+.s-sig{border:1.5px solid #334155;min-height:52px;padding:6px 8px;border-radius:5px;display:flex;flex-direction:column;background:#f8fafc;flex-shrink:0}
+.s-sig .sig-lbl{font-size:8.5px;font-weight:900;text-transform:uppercase;color:#334155}
+.s-sig .sig-line{flex:1;border-bottom:1px dashed #94a3b8;margin-top:5px}
+.s-footer{border-top:1.5px solid #000;padding:6px 11px;background:#f9fafb;flex-shrink:0;overflow:hidden}
+
+/* ══ MODÈLE CLASSIQUE ══ */
+#recu-classic{border:1px solid #ccc}
+.c-header{padding:6px 12px 5px;text-align:center;border-bottom:3px solid #1e3a5f;flex-shrink:0}
+.c-logo{height:34px;margin:0 auto 2px;display:block;object-fit:contain}
+.c-logo.hidden{display:none!important}
+.c-badge{background:#1e3a5f;color:#fff;text-align:center;font-size:9px;font-weight:900;padding:3px 0;letter-spacing:.04em;flex-shrink:0}
+.c-body{padding:6px 10px;flex:1;min-height:0;display:flex;flex-direction:column;gap:0;overflow:hidden;justify-content:space-between}
+.c-card{border:1px solid #cbd5e1;border-radius:3px;padding:2px 8px;background:#f8fafc;display:flex;flex-direction:column;gap:0px;flex-shrink:0}
+.c-row{display:flex;gap:4px;align-items:baseline;border-bottom:.5px dashed #e2e8f0;padding:1px 0}
+.c-lbl{font-size:8px;font-weight:800;color:#475569;text-transform:uppercase;min-width:78px;flex-shrink:0}
+.c-val{font-size:11px;font-weight:900;color:#0f172a;word-break:break-word}
+.c-money{border:2px solid #1e3a5f;border-radius:4px;padding:3px 8px;background:#f0f4ff;display:flex;flex-direction:column;gap:1px;flex-shrink:0}
+.c-mrow{display:flex;justify-content:space-between;border-bottom:.5px dashed #cbd5e1;padding:2px 0;font-size:10px;font-weight:800}
+.c-mrow .mamt{font-size:11px;font-weight:900}
+.c-mrow:last-child{border-bottom:none;border-top:2px solid #1e3a5f;margin-top:1px;padding-top:3px;font-size:12px;font-weight:900;color:#dc2626}
+.c-sigs{display:grid;grid-template-columns:1fr 1fr;gap:4px;flex-shrink:0}
+.c-sig{border:1.5px solid #1e3a5f;border-radius:4px;min-height:52px;display:flex;flex-direction:column;padding:6px 8px;background:#f8fafc;flex-shrink:0}
+.c-siglbl{font-size:8.5px;font-weight:900;color:#1e3a5f;text-transform:uppercase}
+.c-sigline{flex:1;border-bottom:1px dashed #94a3b8;margin-top:4px}
+.c-footer{background:#f3f4f6;border-top:2px solid #1e3a5f;padding:6px 12px;flex-shrink:0;overflow:hidden}
+
+/* TAMPON */
+.stamp{position:absolute;top:44%;left:50%;transform:translate(-50%,-50%) rotate(-22deg);font-size:42px;font-weight:900;opacity:.1;border:9px solid;padding:8px 14px;border-radius:10px;pointer-events:none;text-transform:uppercase;z-index:0}
+.sp{color:#059669;border-color:#059669}
+.sd{color:#dc2626;border-color:#dc2626}
+
+/* ══ IMPRESSION ══ */
+#print-frame{display:none}
+@media print{
+  @page{size:148mm 210mm;margin:0}
+  body>*{display:none!important}
+  #print-frame{display:block!important;position:fixed;top:0;left:0;width:148mm;height:210mm;overflow:hidden;background:#fff}
+  #print-frame .recu-wrap{width:148mm;height:210mm;overflow:hidden}
+  body.print-journal>*{display:none!important}
+  body.print-journal #journal-print-zone{display:block!important;position:fixed;left:10mm;top:10mm;width:128mm}
+}
+
+/* ══ RÉGLAGES ══ */
+.reglages-grid{display:grid;grid-template-columns:1fr;gap:2rem}
+@media(min-width:768px){.reglages-grid{grid-template-columns:1fr 1fr}}
+.logo-zone{display:flex;align-items:center;gap:1.5rem;background:#f8fafc;padding:1rem;border-radius:1.5rem;border:2px dashed #e2e8f0}
+.textarea-style{width:100%;padding:1rem;border:2px solid #e2e8f0;border-radius:1rem;font-size:.75rem;font-family:ui-monospace,monospace;font-weight:700;background:#f8fafc;outline:none}
+.textarea-style:focus{border-color:#3b82f6}
+.text-rose{color:#e11d48}
+.text-rose-dark{color:#be123c}
+.text-slate{color:#64748b}
+.text-dark{color:#0f172a}
+.fw9{font-weight:900}
+.italic{font-style:italic}
+.underline{text-decoration:underline}
+.uppercase{text-transform:uppercase}
+.mt-1{margin-top:.25rem}
+.mt-4{margin-top:1rem}
+.border-b-blue{border-bottom:4px solid #2563eb;padding-bottom:.5rem;color:#1e40af;font-size:1.125rem;font-weight:900;text-transform:uppercase}
+.hint{font-size:.75rem;color:#64748b;font-style:italic}
+</style>
+</head>
+<body>
+
+<div id="print-frame"></div>
+
+<div id="journal-print-zone" style="display:none;background:white;font-size:10px;color:black">
+  <div style="text-align:center;padding-bottom:10px;border-bottom:2px solid black;margin-bottom:10px">
+    <h2 style="font-size:16px;font-weight:900">JOURNAL DES OPÉRATIONS - A.MO.D</h2>
+    <p id="journal-print-date" style="font-size:10px"></p>
+  </div>
+  <table style="width:100%;border-collapse:collapse;font-size:9px">
+    <thead><tr style="background:#eee;border:1px solid black">
+      <th style="border:1px solid black;padding:4px">Date</th>
+      <th style="border:1px solid black;padding:4px">Type</th>
+      <th style="border:1px solid black;padding:4px">Nom</th>
+      <th style="border:1px solid black;padding:4px">Motif</th>
+      <th style="border:1px solid black;padding:4px;text-align:right">Montant</th>
+    </tr></thead>
+    <tbody id="journal-print-body"></tbody>
+  </table>
+  <div style="margin-top:20px;text-align:right;font-weight:900;font-size:12px" id="journal-print-solde"></div>
+</div>
+
+<!-- ════ APP ════ -->
+<div class="app-wrap">
+  <div class="col-left">
+
+    <!-- TITRE -->
+    <div class="card flex-between">
+      <h1 class="app-title">📱 GESTION ATELIER A.MO.D</h1>
+      <div style="display:flex;gap:.5rem">
+        <button onclick="exporterDonnees()" class="btn btn-dark">💾 EXPORT USB</button>
+        <label class="lbl-btn">📂 IMPORT<input type="file" style="display:none" onchange="importerDonnees(event)"></label>
+      </div>
+    </div>
+
+    <!-- FORM RÉPARATION -->
+    <div id="form-reparation" class="card" style="display:flex;flex-direction:column;gap:1rem">
+      <div class="flex-between" style="border-bottom:1px solid #e2e8f0;padding-bottom:.5rem">
+        <h2 id="form-reparation-title" class="section-title">👤 NOUVELLE FICHE DE RÉPARATION</h2>
+        <div style="display:flex;gap:.75rem">
+          <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer;font-size:.625rem;font-weight:700"><input type="radio" name="modele" value="classic" onchange="switchModele('classic')">⚓ Classique</label>
+          <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer;font-size:.625rem;font-weight:700"><input type="radio" name="modele" value="simple" checked onchange="switchModele('simple')">🌿 Simple Épuré</label>
+        </div>
+      </div>
+      <input type="hidden" id="edit-index" value="-1">
+      <div class="grid3">
+        <input type="text" id="client-name" list="list-clients" oninput="autoSave();autocompleteClient(this.value)" placeholder="NOM DU CLIENT" class="input fw9 uppercase">
+        <input type="tel" id="client-phone" list="list-phones" oninput="autoSave()" placeholder="TÉLÉPHONE" class="input fw9">
+        <input type="email" id="client-email" list="list-gmails" oninput="autoSave()" placeholder="GMAIL" class="input italic fw9">
+      </div>
+      <div class="grid3">
+        <input type="text" id="phone-model" list="list-models" oninput="autoSave()" placeholder="MODÈLE APPAREIL" class="input fw9 uppercase">
+        <div style="display:flex;gap:.5rem">
+          <input type="text" id="phone-fault-input" list="list-pannes" placeholder="PANNE (+ ou Entrée)" class="input" style="flex:1" oninput="autoSave()">
+          <button onclick="ajouterPanne()" class="btn-blue-sm fw9" style="font-size:.75rem">+</button>
+        </div>
+        <input type="text" id="phone-code" oninput="autoSave()" placeholder="🔑 CODE / SCHÉMA" class="input input-amber fw9">
+      </div>
+      <div id="pannes-tags" class="flex-wrap"></div>
+      <input type="hidden" id="phone-fault" value="">
+      <div class="grid2" style="background:#f0fdf4;padding:1rem;border-radius:1.5rem;border:2px solid #a7f3d0">
+        <input type="number" id="montant-total" oninput="autoSave()" placeholder="PRIX TOTAL" class="input input-green input-big" style="color:#022c22">
+        <input type="number" id="montant-paye" oninput="autoSave()" placeholder="AVANCE PAYÉE" class="input input-blue input-big" style="color:#1e3a8a">
+      </div>
+      <div class="grid3" style="background:#fef3c7;padding:1rem;border-radius:1.5rem;border:2px solid #fcd34d">
+        <div>
+          <label style="display:block;font-size:.6rem;font-weight:900;color:#92400e;text-transform:uppercase;margin-bottom:.3rem">📅 DATE &amp; HEURE DÉPÔT</label>
+          <input type="datetime-local" id="date-depot" oninput="autoSave()" class="input fw9" style="border-color:#fcd34d;color:#78350f;font-size:.75rem">
+        </div>
+        <div>
+          <label style="display:block;font-size:.6rem;font-weight:900;color:#1e40af;text-transform:uppercase;margin-bottom:.3rem">📅 DATE &amp; HEURE RETRAIT</label>
+          <input type="datetime-local" id="date-retrait" oninput="autoSave()" class="input fw9" style="border-color:#93c5fd;color:#1e3a8a;font-size:.75rem">
+        </div>
+        <div>
+          <label style="display:block;font-size:.6rem;font-weight:900;color:#065f46;text-transform:uppercase;margin-bottom:.3rem">🛡️ GARANTIE</label>
+          <select id="garantie" onchange="autoSave()" class="input fw9" style="border-color:#6ee7b7;color:#065f46;font-size:.75rem">
+            <option value="AUCUNE GARANTIE">AUCUNE GARANTIE</option>
+            <option value="24 HEURES">24 HEURES</option>
+            <option value="48 HEURES">48 HEURES</option>
+            <option value="72 HEURES">72 HEURES</option>
+            <option value="7 JOURS">7 JOURS</option>
+            <option value="15 JOURS">15 JOURS</option>
+            <option value="1 MOIS">1 MOIS</option>
+            <option value="3 MOIS">3 MOIS</option>
+            <option value="6 MOIS">6 MOIS</option>
+            <option value="1 AN">1 AN</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex;gap:.5rem">
+        <button onclick="enregistrerFiche()" id="btn-main" class="btn-blue">📥 ENREGISTRER ET VOIR LE REÇU</button>
+        <button id="btn-cancel-edit" onclick="resetFormReparation()" class="btn-cancel">Annuler</button>
+      </div>
+    </div>
+
+    <!-- FORM FINANCE -->
+    <div id="form-finance" class="card" style="display:flex;flex-direction:column;gap:1rem">
+      <h2 id="form-finance-title" class="section-title" style="color:#be123c;text-decoration:underline">💸 SORTIES & RETRAITS DE CAISSE</h2>
+      <input type="hidden" id="edit-fin-index" value="-1">
+      <div class="grid2">
+        <select id="fin-type" class="input fw9" style="background:#f8fafc;font-size:.75rem">
+          <option value="Dépense">🛒 DÉPENSE PRO</option>
+          <option value="Retrait Patron">👑 RETRAIT PATRON</option>
+          <option value="Achat Pièces">🛠️ ACHAT PIÈCES / ÉCRANS</option>
+          <option value="Charges">🏠 LOYER / ÉLECTRICITÉ</option>
+          <option value="Entrée">📥 ENTRÉE DIVERS</option>
+        </select>
+        <input type="number" id="fin-montant" placeholder="MONTANT F CFA" class="input fw9" style="color:#be123c;font-size:.75rem">
+      </div>
+      <div class="grid2">
+        <input type="text" id="fin-nom" placeholder="QUI ?" class="input fw9 uppercase" style="font-size:.75rem">
+        <input type="text" id="fin-motif" list="list-motifs" placeholder="MOTIF" class="input italic" style="font-size:.75rem">
+      </div>
+      <div style="display:flex;gap:.5rem">
+        <button onclick="ajouterSortie()" id="btn-fin-main" class="btn-rose">Valider l'Opération</button>
+        <button id="btn-fin-cancel" onclick="resetFormFinance()" class="btn-cancel">X</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ COLONNE DROITE : APERÇU ════ -->
+  <div class="col-right">
+    <div id="apercu-vide" class="apercu-vide">REÇU EN ATTENTE…</div>
+
+    <div id="section-a-imprimer" style="display:none">
+      <div class="preview-box">
+
+        <!-- ══ SIMPLE ÉPURÉ ══ -->
+        <div id="recu-simple" class="recu-wrap">
+          <div id="sA-stamp" class="stamp"></div>
+          <div class="s-top">
+            <img id="sA-logo" src="" class="c-logo hidden" style="height:34px;margin:0 auto 2px;display:none;object-fit:contain">
+            <span class="zone-editable-label">✏️ CLIQUEZ POUR MODIFIER L'EN-TÊTE</span>
+            <div id="sA-header-edit" class="header-edit" contenteditable="true" oninput="syncHeaderDiv(this)" spellcheck="false"></div>
+          </div>
+          <div class="s-body">
+            <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #000;padding-bottom:5px;flex-shrink:0">
+              <span style="font-weight:900;font-size:11px">FICHE N° <span id="sA-code"></span></span>
+              <span style="font-weight:700;font-size:9px" id="sA-datebadge"></span>
+            </div>
+            <div class="sec-title">👤 IDENTIFICATION CLIENT</div>
+            <div>
+              <div class="s-line"><span class="lbl">Client :</span><span class="val" id="sA-name" style="font-weight:900;font-size:11px;color:#0f172a"></span></div>
+              <div class="s-line"><span class="lbl">Téléphone :</span><span class="val" id="sA-phone" style="font-weight:900;font-size:11px;color:#0f172a"></span></div>
+              <div class="s-line"><span class="lbl">Gmail :</span><span class="val" id="sA-gmail" style="font-weight:900;font-size:11px;color:#0f172a;font-style:italic"></span></div>
+            </div>
+            <div class="sec-title">📱 DÉTAILS TECHNIQUES</div>
+            <div>
+              <div class="s-line"><span class="lbl">Appareil :</span><span class="val" id="sA-model" style="font-weight:900;font-size:11px;color:#0f172a;text-decoration:underline"></span></div>
+              <div class="s-line"><span class="lbl">Panne(s) :</span><span class="val" id="sA-fault" style="font-weight:900;font-size:11px;color:#0f172a"></span></div>
+              <div class="s-line"><span class="lbl">Code/Sécurité :</span><span class="val" id="sA-lock" style="font-weight:900;font-size:11px;color:#92400e;background:#fefce8;padding:1px 3px;border-radius:3px"></span></div>
+            </div>
+            <div class="sec-title">📅 DATES & GARANTIE</div>
+            <div>
+              <div class="s-line"><span class="lbl">Dépôt :</span><span class="val" id="sA-depot" style="font-weight:900;font-size:10px;color:#92400e"></span></div>
+              <div class="s-line"><span class="lbl">Retrait :</span><span class="val" id="sA-retrait" style="font-weight:900;font-size:10px;color:#1e40af"></span></div>
+              <div class="s-line"><span class="lbl">Garantie :</span><span class="val" id="sA-garantie" style="font-weight:900;font-size:10px;color:#065f46;background:#d1fae5;padding:1px 4px;border-radius:3px"></span></div>
+            </div>
+            <div class="sec-title">💰 COMPTABILITÉ (F CFA)</div>
+            <div class="s-money-row">
+              <div class="s-money-box green"><span class="mlbl">PRIX TOTAL</span><span class="mval" id="sA-total"></span></div>
+              <div class="s-money-box blue"><span class="mlbl">DÉJÀ PAYÉ</span><span class="mval" id="sA-paye"></span></div>
+              <div class="s-money-box red"><span class="mlbl">RESTE À PAYER</span><span class="mval" id="sA-reste"></span></div>
+            </div>
+            <div class="s-sigs">
+              <div class="s-sig"><span class="sig-lbl">✍ Signature Client — Dépôt</span><div class="sig-line"></div></div>
+              <div class="s-sig"><span class="sig-lbl">✍ Signature Client — Retrait</span><div class="sig-line"></div></div>
+            </div>
+          </div>
+          <div class="s-footer">
+            <span class="zone-editable-label">✏️ CLIQUEZ POUR MODIFIER LE PIED DE PAGE</span>
+            <div id="sA-footer-edit" class="footer-edit" contenteditable="true" oninput="syncFooterDiv(this)" spellcheck="false"></div>
+          </div>
+        </div>
+
+        <!-- ══ CLASSIQUE ══ -->
+        <div id="recu-classic" class="recu-wrap" style="display:none">
+          <div id="cA-stamp" class="stamp"></div>
+          <div class="c-header">
+            <img id="cA-logo" src="" class="c-logo hidden" style="display:none">
+            <span class="zone-editable-label">✏️ CLIQUEZ POUR MODIFIER L'EN-TÊTE</span>
+            <div id="cA-header-edit" class="header-edit" contenteditable="true" oninput="syncHeaderDiv(this)" spellcheck="false"></div>
+          </div>
+          <div class="c-badge">📋 FICHE DE RÉPARATION &nbsp;|&nbsp; N° <span id="cA-code"></span></div>
+          <div class="c-body">
+            <div class="sec-title">👤 Identification Client</div>
+            <div class="c-card">
+              <div class="c-row"><span class="c-lbl">Client</span><span class="c-val" id="cA-name" style="font-weight:900;font-size:11px"></span></div>
+              <div class="c-row"><span class="c-lbl">Téléphone</span><span class="c-val" id="cA-phone" style="font-weight:900;font-size:11px"></span></div>
+              <div class="c-row"><span class="c-lbl">Gmail</span><span class="c-val" id="cA-gmail" style="font-weight:900;font-size:11px;font-style:italic"></span></div>
+            </div>
+            <div class="sec-title">📱 Détails Techniques</div>
+            <div class="c-card">
+              <div class="c-row"><span class="c-lbl">Appareil</span><span class="c-val" id="cA-model" style="font-weight:900;font-size:11px;text-decoration:underline"></span></div>
+              <div class="c-row"><span class="c-lbl">Panne(s)</span><span class="c-val" id="cA-fault" style="font-weight:900;font-size:11px"></span></div>
+              <div class="c-row"><span class="c-lbl">Code/Sécurité</span><span class="c-val" id="cA-lock" style="font-weight:900;font-size:11px;color:#92400e;background:#fefce8;padding:1px 3px;border-radius:3px"></span></div>
+            </div>
+            <div class="sec-title">📅 Dates &amp; Garantie</div>
+            <div class="c-card">
+              <div class="c-row"><span class="c-lbl">Dépôt</span><span class="c-val" id="cA-depot" style="font-weight:900;font-size:10px;color:#92400e"></span></div>
+              <div class="c-row"><span class="c-lbl">Retrait</span><span class="c-val" id="cA-retrait" style="font-weight:900;font-size:10px;color:#1e40af"></span></div>
+              <div class="c-row"><span class="c-lbl">Garantie</span><span class="c-val" id="cA-garantie" style="font-weight:900;font-size:10px;color:#065f46;background:#d1fae5;padding:1px 4px;border-radius:3px"></span></div>
+            </div>
+            <div class="sec-title">💰 Comptabilité (F CFA)</div>
+            <div class="c-money">
+              <div class="c-mrow"><span>Prix total</span><span class="mamt" id="cA-total" style="color:#059669"></span></div>
+              <div class="c-mrow"><span>Déjà payé</span><span class="mamt" id="cA-paye" style="color:#2563eb"></span></div>
+              <div class="c-mrow"><span>RESTE À PAYER</span><span class="mamt" id="cA-reste"></span></div>
+            </div>
+            <div class="c-sigs">
+              <div class="c-sig"><span class="c-siglbl">✍ Signature Client — Dépôt</span><div class="c-sigline"></div></div>
+              <div class="c-sig"><span class="c-siglbl">✍ Signature Client — Retrait</span><div class="c-sigline"></div></div>
+            </div>
+          </div>
+          <div class="c-footer">
+            <span class="zone-editable-label">✏️ CLIQUEZ POUR MODIFIER LE PIED DE PAGE</span>
+            <div id="cA-footer-edit" class="footer-edit" contenteditable="true" oninput="syncFooterDiv(this)" spellcheck="false"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <button id="btn-print" onclick="imprimerRecu()" style="display:none" class="btn-print-big">🖨️ IMPRIMER / PDF (A5 PAGE UNIQUE)</button>
+
+    <div class="card-dark">
+      <p class="bilan-label">📊 BILAN CAISSE</p>
+      <div class="bilan-row"><span class="uppercase">Solde Net :</span><span style="text-decoration:underline" id="bilan-total">0 F</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ REGISTRES ════ -->
+<div class="registres">
+
+  <div class="card">
+    <h2 style="font-weight:900;color:#1e293b;text-transform:uppercase;font-style:italic;font-size:1.125rem;margin-bottom:1rem">📋 REGISTRE DES RÉPARATIONS EN COURS</h2>
+    <div style="overflow-x:auto">
+      <table>
+        <thead class="tbl-head"><tr><th>Client</th><th>Appareil</th><th style="text-align:right">Comptabilité</th><th style="text-align:center">Actions</th></tr></thead>
+        <tbody id="registre-corps"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="tbl-dark-head">
+      <h2 style="font-weight:900;font-style:italic;text-transform:uppercase;font-size:.875rem">📜 JOURNAL DES OPÉRATIONS FINANCIÈRES</h2>
+      <div style="display:flex;gap:.5rem">
+        <button onclick="imprimerJournal()" class="btn-slate-sm">🖨️ IMPRIMER RAPPORT</button>
+        <button onclick="exporterHistorique()" class="btn-green-sm">Export CSV</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+      <table>
+        <thead style="background:#f1f5f9;font-weight:900;text-transform:uppercase;font-size:.625rem"><tr>
+          <th style="padding:.75rem">Date</th><th style="padding:.75rem">Type</th><th style="padding:.75rem">Référence / Qui</th>
+          <th style="padding:.75rem">Motif</th><th style="padding:.75rem;text-align:right">Montant</th><th style="padding:.75rem;text-align:center">Actions</th>
+        </tr></thead>
+        <tbody id="histo-corps"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card-blue">
+    <h2 class="border-b-blue">⚙️ RÉGLAGES MAÎTRE (LOGO, EN-TÊTE, PIED DE PAGE)</h2>
+    <p class="hint" style="margin-top:.5rem">💡 Cliquez directement sur l'en-tête ou le pied de page du reçu pour modifier le texte.</p>
+    <div class="reglages-grid" style="margin-top:1.5rem">
+      <div style="display:flex;flex-direction:column;gap:1.5rem">
+        <div>
+          <label class="label-sm">🖼️ LOGO DE LA BOUTIQUE</label>
+          <div class="logo-zone">
+            <input type="file" accept="image/*" onchange="chargerLogo(event)" style="font-size:.75rem">
+            <button onclick="supprimerLogo()" style="color:#e11d48;font-size:.75rem;font-weight:900;text-transform:uppercase;background:none;border:none;cursor:pointer">Supprimer</button>
+          </div>
+        </div>
+        <div>
+          <label class="label-sm">📝 TEXTE DE L'EN-TÊTE</label>
+          <textarea id="cfg-header" rows="5" oninput="sauvegarderConfig()" class="textarea-style"></textarea>
+        </div>
+      </div>
+      <div>
+        <label class="label-sm">⚠️ TEXTE DU PIED DE PAGE</label>
+        <textarea id="cfg-footer" rows="12" oninput="sauvegarderConfig()" class="textarea-style"></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<datalist id="list-pannes">
+  <option value="ÉCRAN CASSÉ (ORIGINAL)"></option><option value="ÉCRAN CASSÉ (COMPATIBLE)"></option>
+  <option value="BATTERIE GONFLÉE / HS"></option><option value="PORT DE CHARGE HS"></option>
+  <option value="COMPTE GOOGLE (FRP)"></option><option value="ICLOUD BLOQUÉ"></option>
+  <option value="MOT DE PASSE OUBLIÉ"></option><option value="COURT-CIRCUIT CARTE MÈRE"></option>
+  <option value="DÉSOXYDATION (EAU)"></option><option value="VITRE ARRIÈRE CASSÉE"></option>
+  <option value="CAMÉRA NOIRE / FLOUE"></option><option value="MICRO MUET / HP HS"></option>
+  <option value="DIAGNOSTIC COMPLET"></option>
+</datalist>
+<datalist id="list-clients"></datalist>
+<datalist id="list-phones"></datalist>
+<datalist id="list-gmails"></datalist>
+<datalist id="list-models"></datalist>
+<datalist id="list-motifs">
+  <option value="ACHAT ÉCRANS / VITRES"></option><option value="ACHAT BATTERIES / PIÈCES"></option>
+  <option value="LOYER DE LA BOUTIQUE"></option><option value="FACTURE SBEE / ÉLECTRICITÉ"></option>
+  <option value="FORFAIT INTERNET / CRÉDIT"></option><option value="PETIT DÉJEUNER / REPAS"></option>
+  <option value="SALAIRE EMPLOYÉ / AIDE"></option><option value="TRANSPORT / CARBURANT"></option>
+</datalist>
+
+<script>
+// ── AUTOCOMPLETE DATALISTS ──
+function majDatalistsClients() {
+  const noms = [...new Set(db.fiches.map(f => f.nom))].sort();
+  const tels = [...new Set(db.fiches.map(f => f.tel).filter(Boolean))].sort();
+  const gmails = [...new Set(db.fiches.map(f => f.gmail).filter(Boolean))].sort();
+  const models = [...new Set(db.fiches.map(f => f.model))].sort();
+  document.getElementById('list-clients').innerHTML = noms.map(v=>`<option value="${v}">`).join('');
+  document.getElementById('list-phones').innerHTML = tels.map(v=>`<option value="${v}">`).join('');
+  document.getElementById('list-gmails').innerHTML = gmails.map(v=>`<option value="${v}">`).join('');
+  document.getElementById('list-models').innerHTML = models.map(v=>`<option value="${v}">`).join('');
+}
+
+// Quand on tape un nom déjà connu → remplir auto téléphone/gmail
+function autocompleteClient(val) {
+  const match = db.fiches.find(f => f.nom === val.toUpperCase().trim());
+  if (match) {
+    if (!document.getElementById('client-phone').value) document.getElementById('client-phone').value = match.tel || '';
+    if (!document.getElementById('client-email').value) document.getElementById('client-email').value = match.gmail || '';
+  }
+}
+
+// Auto-remplir date dépôt avec maintenant si vide
+function autoDateDepot() {
+  const el = document.getElementById('date-depot');
+  if (!el.value) {
+    const now = new Date();
+    const pad = n => String(n).padStart(2,'0');
+    el.value = now.getFullYear()+'-'+pad(now.getMonth()+1)+'-'+pad(now.getDate())+'T'+pad(now.getHours())+':'+pad(now.getMinutes());
+  }
+}
+
+const DEFAULT_HEADER = '';
+const DEFAULT_FOOTER = '';
+
+let db = JSON.parse(localStorage.getItem('amod_v24_db')) || {
+  fiches: [], finances: [],
+  config: { header: DEFAULT_HEADER, footer: DEFAULT_FOOTER, logo: '' }
+};
+
+// ── S'assurer que header/footer ont toujours une valeur même sur PC vierge ──
+if (!db.config.header) db.config.header = DEFAULT_HEADER;
+if (!db.config.footer) db.config.footer = DEFAULT_FOOTER;
+
+let pannesChoisies = [];
+let modeleActif = 'simple';
+
+window.onload = function () {
+  document.getElementById('cfg-header').value = db.config.header;
+  document.getElementById('cfg-footer').value = db.config.footer;
+  appliquerTextesDansRecu();
+  if (db.config.logo) appliquerLogo(db.config.logo);
+  rafraichirInterface();
+  autoDateDepot();
+};
+
+function autoSave() { localStorage.setItem('amod_v24_db', JSON.stringify(db)); }
+
+function appliquerTextesDansRecu() {
+  ['cA','sA'].forEach(p => {
+    const h = document.getElementById(p+'-header-edit');
+    const f = document.getElementById(p+'-footer-edit');
+    if (h) h.innerText = db.config.header;
+    if (f) f.innerText = db.config.footer;
+  });
+}
+
+function syncHeaderDiv(el) {
+  db.config.header = el.innerText;
+  document.getElementById('cfg-header').value = el.innerText;
+  ['cA-header-edit','sA-header-edit'].forEach(id => {
+    const o = document.getElementById(id);
+    if (o && o !== el) o.innerText = el.innerText;
+  });
+  autoSave();
+}
+
+function syncFooterDiv(el) {
+  db.config.footer = el.innerText;
+  document.getElementById('cfg-footer').value = el.innerText;
+  ['cA-footer-edit','sA-footer-edit'].forEach(id => {
+    const o = document.getElementById(id);
+    if (o && o !== el) o.innerText = el.innerText;
+  });
+  autoSave();
+}
+
+function sauvegarderConfig() {
+  db.config.header = document.getElementById('cfg-header').value;
+  db.config.footer = document.getElementById('cfg-footer').value;
+  appliquerTextesDansRecu();
+  autoSave();
+}
+
+function chargerLogo(e) {
+  const r = new FileReader();
+  r.onload = function() { db.config.logo = r.result; appliquerLogo(r.result); autoSave(); };
+  r.readAsDataURL(e.target.files[0]);
+}
+function appliquerLogo(src) {
+  ['cA-logo','sA-logo'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.src = src; el.classList.remove('hidden'); el.style.display = 'block'; }
+  });
+}
+function supprimerLogo() {
+  db.config.logo = '';
+  ['cA-logo','sA-logo'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.style.display = 'none'; }
+  });
+  autoSave();
+}
+
+function switchModele(m) {
+  modeleActif = m;
+  document.getElementById('recu-classic').style.display = m === 'classic' ? 'flex' : 'none';
+  document.getElementById('recu-simple').style.display = m === 'simple' ? 'flex' : 'none';
+}
+
+function ajouterPanne() {
+  const inp = document.getElementById('phone-fault-input');
+  const val = inp.value.trim();
+  if (val) { pannesChoisies.push(val.toUpperCase()); inp.value = ''; renderPannes(); }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const inp = document.getElementById('phone-fault-input');
+  if (inp) inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); ajouterPanne(); } });
+});
+
+function renderPannes() {
+  const box = document.getElementById('pannes-tags');
+  box.innerHTML = '';
+  pannesChoisies.forEach((p, i) => {
+    const sp = document.createElement('span');
+    sp.className = 'panne-tag';
+    sp.innerHTML = p + ' <button onclick="pannesChoisies.splice('+i+',1);renderPannes();" style="color:#e11d48;font-weight:900;background:none;border:none;cursor:pointer">✕</button>';
+    box.appendChild(sp);
+  });
+  document.getElementById('phone-fault').value = pannesChoisies.join(' | ');
+}
+
+function enregistrerFiche() {
+  const idx = parseInt(document.getElementById('edit-index').value);
+  const nom = document.getElementById('client-name').value.trim();
+  const model = document.getElementById('phone-model').value.trim();
+  const paye = parseFloat(document.getElementById('montant-paye').value) || 0;
+  if (!nom || !model) return alert('Nom et Modèle requis !');
+
+  const panneInput = document.getElementById('phone-fault-input').value.trim();
+  if (panneInput && !pannesChoisies.includes(panneInput.toUpperCase())) {
+    pannesChoisies.push(panneInput.toUpperCase());
+    document.getElementById('phone-fault-input').value = '';
+    renderPannes();
+  }
+
+  const panneTexte = pannesChoisies.length > 0
+    ? pannesChoisies.join(' | ')
+    : (document.getElementById('phone-fault').value || '---');
+
+  const f = {
+    code: idx >= 0 ? db.fiches[idx].code : 'AM-' + Date.now().toString().slice(-6),
+    nom: nom.toUpperCase(),
+    tel: document.getElementById('client-phone').value,
+    gmail: document.getElementById('client-email').value,
+    model: model.toUpperCase(),
+    fault: panneTexte,
+    lock: document.getElementById('phone-code').value || 'AUCUN',
+    total: parseFloat(document.getElementById('montant-total').value) || 0,
+    paye: paye,
+    depot: document.getElementById('date-depot').value,
+    retrait: document.getElementById('date-retrait').value,
+    garantie: document.getElementById('garantie').value,
+    date: idx >= 0 ? db.fiches[idx].date : new Date().toISOString()
+  };
+
+  if (idx >= 0) { db.fiches[idx] = f; }
+  else {
+    db.fiches.unshift(f);
+    if (paye > 0) db.finances.unshift({ type:'Entrée', montant:paye, motif:'AVANCE '+f.code, nom:f.nom, date:new Date().toISOString() });
+  }
+
+  autoSave(); resetFormReparation(); rafraichirInterface(); chargerApercu(f);
+}
+
+function modifierFiche(idx) {
+  const f = db.fiches[idx];
+  document.getElementById('edit-index').value = idx;
+  document.getElementById('client-name').value = f.nom;
+  document.getElementById('client-phone').value = f.tel;
+  document.getElementById('client-email').value = f.gmail;
+  document.getElementById('phone-model').value = f.model;
+  document.getElementById('phone-code').value = f.lock;
+  document.getElementById('montant-total').value = f.total;
+  document.getElementById('montant-paye').value = f.paye;
+  document.getElementById('date-depot').value = f.depot || '';
+  document.getElementById('date-retrait').value = f.retrait || '';
+  document.getElementById('garantie').value = f.garantie || 'AUCUNE GARANTIE';
+  pannesChoisies = f.fault && f.fault !== '---' ? f.fault.split(' | ') : [];
+  renderPannes();
+  document.getElementById('form-reparation-title').innerText = '📝 MODIFIER LA FICHE ' + f.code;
+  document.getElementById('btn-main').innerText = 'Mettre à jour la fiche';
+  document.getElementById('btn-cancel-edit').style.display = 'block';
+  document.getElementById('form-reparation').scrollIntoView({ behavior:'smooth' });
+}
+
+function resetFormReparation() {
+  document.getElementById('edit-index').value = '-1';
+  document.getElementById('form-reparation-title').innerText = '👤 NOUVELLE FICHE DE RÉPARATION';
+  document.getElementById('btn-main').innerText = '📥 ENREGISTRER ET VOIR LE REÇU';
+  document.getElementById('btn-cancel-edit').style.display = 'none';
+  ['client-name','client-phone','client-email','phone-model','phone-fault-input','phone-code','montant-total','montant-paye','date-depot','date-retrait']
+    .forEach(id => document.getElementById(id).value = '');
+  document.getElementById('garantie').value = 'AUCUNE GARANTIE';
+  pannesChoisies = []; renderPannes();
+  autoDateDepot();
+}
+
+function chargerApercu(f) {
+  const reste = f.total - f.paye;
+  ['cA','sA'].forEach(p => {
+    document.getElementById(p+'-code').innerText = f.code;
+    document.getElementById(p+'-name').innerText = f.nom;
+    document.getElementById(p+'-phone').innerText = f.tel || '---';
+    document.getElementById(p+'-gmail').innerText = f.gmail || '---';
+    document.getElementById(p+'-model').innerText = f.model;
+    document.getElementById(p+'-fault').innerText = f.fault || '---';
+    document.getElementById(p+'-lock').innerText = f.lock;
+    // dates & garantie
+    const fmtDT = v => {
+      if (!v) return '---';
+      const d = new Date(v);
+      return d.toLocaleDateString('fr-FR') + ' à ' + d.toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'});
+    };
+    document.getElementById(p+'-depot').innerText = fmtDT(f.depot);
+    document.getElementById(p+'-retrait').innerText = f.retrait ? fmtDT(f.retrait) : 'NON ENCORE RETIRÉ';
+    document.getElementById(p+'-garantie').innerText = f.garantie || 'AUCUNE GARANTIE';
+    document.getElementById(p+'-total').innerText = f.total.toLocaleString() + ' F';
+    document.getElementById(p+'-paye').innerText = f.paye.toLocaleString() + ' F';
+    document.getElementById(p+'-reste').innerText = reste.toLocaleString() + ' F';
+    const s = document.getElementById(p+'-stamp');
+    if (s) { s.innerText = reste <= 0 ? 'PAYÉ' : 'DETTE'; s.className = 'stamp ' + (reste <= 0 ? 'sp' : 'sd'); }
+  });
+  if (f.date) document.getElementById('sA-datebadge').innerText = 'LE ' + new Date(f.date).toLocaleDateString('fr-FR');
+  document.getElementById('apercu-vide').style.display = 'none';
+  document.getElementById('section-a-imprimer').style.display = 'block';
+  document.getElementById('btn-print').style.display = 'block';
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function imprimerRecu() {
+  const frame = document.getElementById('print-frame');
+  const sourceId = modeleActif === 'classic' ? 'recu-classic' : 'recu-simple';
+  const source = document.getElementById(sourceId);
+  const clone = source.cloneNode(true);
+  clone.style.cssText = 'width:148mm;height:210mm;overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;font-family:Segoe UI,Arial,sans-serif;font-size:10px;position:relative;background:#fff;color:#111;border:'+(modeleActif==='simple'?'2.5px solid #000':'1px solid #ccc')+';';
+  frame.innerHTML = ''; frame.appendChild(clone); window.print();
+}
+
+function ajouterSortie() {
+  const idx = parseInt(document.getElementById('edit-fin-index').value);
+  const m = parseFloat(document.getElementById('fin-montant').value) || 0;
+  const no = document.getElementById('fin-nom').value.trim();
+  const mo = document.getElementById('fin-motif').value.trim();
+  const type = document.getElementById('fin-type').value;
+  if (m > 0 && no && mo) {
+    const op = { type: type==='Entrée'?'Entrée':'Sortie', subtype:type, montant:m, nom:no.toUpperCase(), motif:mo, date: idx>=0 ? db.finances[idx].date : new Date().toISOString() };
+    if (idx >= 0) db.finances[idx] = op; else db.finances.unshift(op);
+    autoSave(); resetFormFinance(); rafraichirInterface();
+  }
+}
+
+function modifierSortie(idx) {
+  const f = db.finances[idx];
+  document.getElementById('edit-fin-index').value = idx;
+  document.getElementById('fin-type').value = f.subtype || f.type;
+  document.getElementById('fin-montant').value = f.montant;
+  document.getElementById('fin-nom').value = f.nom;
+  document.getElementById('fin-motif').value = f.motif;
+  document.getElementById('form-finance-title').innerText = "📝 MODIFIER L'OPÉRATION";
+  document.getElementById('btn-fin-main').innerText = "Mettre à jour l'opération";
+  document.getElementById('btn-fin-cancel').style.display = 'block';
+  document.getElementById('form-finance').scrollIntoView({ behavior:'smooth' });
+}
+
+function resetFormFinance() {
+  document.getElementById('edit-fin-index').value = '-1';
+  document.getElementById('form-finance-title').innerText = '💸 SORTIES & RETRAITS DE CAISSE';
+  document.getElementById('btn-fin-main').innerText = "Valider l'Opération";
+  document.getElementById('btn-fin-cancel').style.display = 'none';
+  ['fin-montant','fin-motif','fin-nom'].forEach(id => document.getElementById(id).value = '');
+}
+
+function rafraichirInterface() {
+  const rc = document.getElementById('registre-corps');
+  const hc = document.getElementById('histo-corps');
+  rc.innerHTML = ''; hc.innerHTML = '';
+  let soldeT = 0;
+  db.fiches.forEach((f, i) => {
+    const reste = f.total - f.paye;
+    rc.innerHTML += `<tr>
+      <td class="tbl-body" style="padding:.75rem;border-bottom:1px solid #f1f5f9"><b>${f.nom}</b><br><span style="color:#64748b;font-size:.6875rem">${f.tel||''}</span></td>
+      <td style="padding:.75rem;border-bottom:1px solid #f1f5f9;text-transform:uppercase"><b>${f.model}</b><br><span style="font-size:.5625rem;opacity:.6">${f.fault}</span></td>
+      <td style="padding:.75rem;border-bottom:1px solid #f1f5f9;text-align:right"><b>${f.total.toLocaleString()} F</b><br><span style="color:#e11d48">Reste: ${reste.toLocaleString()} F</span></td>
+      <td style="padding:.75rem;border-bottom:1px solid #f1f5f9;text-align:center">
+        <button onclick="chargerApercu(db.fiches[${i}])" title="Voir reçu" style="background:none;border:none;cursor:pointer">📄</button>
+        <button onclick="modifierFiche(${i})" title="Modifier" style="background:none;border:none;cursor:pointer">✏️</button>
+        <button onclick="if(confirm('Supprimer ?')){db.fiches.splice(${i},1);autoSave();rafraichirInterface();}" style="background:none;border:none;cursor:pointer;color:#e11d48" title="Supprimer">🗑️</button>
+      </td></tr>`;
+  });
+  db.finances.forEach((f, i) => {
+    const isE = f.type === 'Entrée';
+    soldeT += isE ? f.montant : -f.montant;
+    const d = new Date(f.date);
+    hc.innerHTML += `<tr style="border-bottom:1px solid #f8fafc;background:${isE?'#f0fdf4':'#fff1f2'}">
+      <td style="padding:.5rem;font-size:.5625rem">${d.toLocaleDateString('fr-FR')} ${d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</td>
+      <td style="padding:.5rem;font-weight:900;font-size:.5625rem;text-transform:uppercase">${isE?'ENTRÉE':'SORTIE'}</td>
+      <td style="padding:.5rem;font-weight:700">${f.nom||'—'}</td>
+      <td style="padding:.5rem;font-style:italic;font-size:.625rem">${f.motif}</td>
+      <td style="padding:.5rem;text-align:right;font-weight:900">${f.montant.toLocaleString()} F</td>
+      <td style="padding:.5rem;text-align:center">
+        <button onclick="modifierSortie(${i})" title="Modifier" style="background:none;border:none;cursor:pointer">✏️</button>
+        <button onclick="if(confirm('Supprimer ?')){db.finances.splice(${i},1);autoSave();rafraichirInterface();}" title="Supprimer" style="background:none;border:none;cursor:pointer">🗑️</button>
+      </td></tr>`;
+  });
+  document.getElementById('bilan-total').innerText = soldeT.toLocaleString() + ' F';
+  majDatalistsClients();
+}
+
+function imprimerJournal() {
+  const body = document.getElementById('journal-print-body');
+  document.getElementById('journal-print-date').innerText = 'Édité le ' + new Date().toLocaleString('fr-FR');
+  body.innerHTML = '';
+  let soldeT = 0;
+  db.finances.forEach(f => {
+    const isE = f.type === 'Entrée';
+    soldeT += isE ? f.montant : -f.montant;
+    body.innerHTML += `<tr style="border-bottom:1px solid #ddd">
+      <td style="padding:4px">${new Date(f.date).toLocaleDateString('fr-FR')}</td>
+      <td style="padding:4px">${isE?'ENTRÉE':'SORTIE'}</td>
+      <td style="padding:4px">${f.nom}</td>
+      <td style="padding:4px">${f.motif}</td>
+      <td style="padding:4px;text-align:right">${f.montant.toLocaleString()} F</td>
+    </tr>`;
+  });
+  document.getElementById('journal-print-solde').innerText = 'SOLDE NET EN CAISSE : ' + soldeT.toLocaleString() + ' F CFA';
+  document.body.classList.add('print-journal');
+  window.print();
+  document.body.classList.remove('print-journal');
+}
+
+function exporterDonnees() {
+  const b = new Blob([JSON.stringify(db)],{type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'AMOD_SAVE.json'; a.click();
+}
+function exporterHistorique() {
+  let csv = 'Date,Type,Nom,Motif,Montant\n';
+  db.finances.forEach(f => { csv += `${new Date(f.date).toLocaleDateString('fr-FR')},${f.type},${f.nom},${f.motif},${f.montant}\n`; });
+  const b = new Blob([csv],{type:'text/csv'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'AMOD_FINANCES.csv'; a.click();
+}
+function importerDonnees(e) {
+  const r = new FileReader();
+  r.onload = function() {
+    try { db = JSON.parse(r.result); localStorage.setItem('amod_v24_db', JSON.stringify(db)); rafraichirInterface(); location.reload(); }
+    catch(err) { alert('Fichier invalide'); }
+  };
+  r.readAsText(e.target.files[0]);
+}
+</script>
+</body>
+</html>
