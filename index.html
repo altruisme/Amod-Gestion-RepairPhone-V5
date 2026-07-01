@@ -860,3 +860,27 @@ function importerDonnees(e) {
 </script>
 </body>
 </html>
+// --- SYNCHRONISATION EN TEMPS RÉEL (RENDER) ---
+const socket = io();
+
+// Quand l'application démarre, on demande les fiches existantes au serveur
+socket.on('connect', () => {
+    console.log('Connecté au serveur de synchronisation A.MO.D');
+    socket.emit('demanderFiches');
+});
+
+// Quand le serveur envoie la liste mise à jour, on l'enregistre et on rafraîchit l'affichage
+socket.on('miseAJourFiches', (fichesMiseAJour) => {
+    localStorage.setItem('fichesReparation', JSON.stringify(fichesMiseAJour));
+    // ATTENTION : Remplacez 'afficherFiches' par le nom EXACT de votre 
+    // fonction JavaScript qui dessine votre tableau/registre à l'écran
+    if (typeof afficherFiches === 'function') {
+        afficherFiches();
+    } else if (typeof chargerFiches === 'function') {
+        chargerFiches();
+    }
+});
+
+// Modifier votre fonction existante qui enregistre une nouvelle fiche
+// pour qu'elle prévienne le serveur. Ajoutez cette ligne juste après votre localStorage.setItem :
+// socket.emit('nouvelleFiche', fiches);
