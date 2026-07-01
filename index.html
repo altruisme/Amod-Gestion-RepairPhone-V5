@@ -857,10 +857,28 @@ function importerDonnees(e) {
   };
   r.readAsText(e.target.files[0]);
 }
-</script>
-</body>
-</html>
 // --- SYNCHRONISATION EN TEMPS RÉEL (RENDER) ---
+const socket = io();
+
+// Quand l'application démarre, on demande les fiches existantes au serveur
+socket.on('connect', () => {
+    console.log('Connecté au serveur de synchronisation A.MO.D');
+    socket.emit('demanderFiches');
+});
+
+// Quand le serveur envoie la liste mise à jour, on l'enregistre et on rafraîchit l'affichage
+socket.on('miseAJourFiches', (fichesMiseAJour) => {
+    localStorage.setItem('fichesReparation', JSON.stringify(fichesMiseAJour));
+    if (typeof afficherFiches === 'function') {
+        afficherFiches();
+    } else if (typeof chargerFiches === 'function') {
+        chargerFiches();
+    }
+});
+
+// IMPORTANT : Dans ta fonction enregistrerFiche(), 
+// n'oublie pas d'ajouter cette ligne après le localStorage.setItem :
+// socket.emit('nouvelleFiche', fiches);
 const socket = io();
 
 // Quand l'application démarre, on demande les fiches existantes au serveur
